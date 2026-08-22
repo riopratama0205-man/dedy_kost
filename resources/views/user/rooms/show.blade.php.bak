@@ -1,0 +1,358 @@
+﻿@extends('layouts.app')
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Calendar Container */
+        .flatpickr-calendar {
+            background: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            font-family: inherit !important;
+        }
+
+        /* Calendar Header - Ensure month/year is visible */
+        .flatpickr-months {
+            width: 100% !important;
+            padding: 1rem !important;
+            background: #f8fafc !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        .flatpickr-month {
+            height: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            flex: 1 !important;
+        }
+
+        .flatpickr-current-month {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            padding: 0.5rem 0 !important;
+            display: inline-block !important;
+            position: static !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            appearance: none !important;
+            background: transparent !important;
+            border: none !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            padding: 0 0.5rem !important;
+            cursor: pointer !important;
+        }
+
+        .flatpickr-current-month .numInputWrapper {
+            display: inline-block !important;
+        }
+
+        .flatpickr-current-month .cur-year {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            padding: 0 0.5rem !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            padding: 0.5rem !important;
+            fill: #64748b !important;
+        }
+
+        .flatpickr-prev-month:hover,
+        .flatpickr-next-month:hover {
+            fill: #0891b2 !important;
+        }
+
+        /* Weekday Headers */
+        .flatpickr-weekdays {
+            background: #f8fafc !important;
+            padding: 0.5rem 0 !important;
+        }
+
+        .flatpickr-weekday {
+            color: #64748b !important;
+            font-weight: 600 !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Days Container */
+        .flatpickr-days {
+            width: 100% !important;
+            padding: 1rem !important;
+        }
+
+        .dayContainer {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Individual Days */
+        .flatpickr-day {
+            height: 3rem !important;
+            line-height: 3rem !important;
+            border-radius: 0.5rem !important;
+            border: 1px solid transparent !important;
+            margin: 0.125rem !important;
+            font-size: 0.9375rem !important;
+            font-weight: 500 !important;
+            color: #334155 !important;
+        }
+
+        .flatpickr-day.today {
+            background: #e0f2fe !important;
+            border-color: #0891b2 !important;
+            max-width: 320px !important;
+            border-radius: 12px !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-months {
+            padding: 0.75rem !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-current-month {
+            font-size: 1rem !important;
+            padding: 0.25rem 0 !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-calendar:not(.inline) .flatpickr-current-month .cur-year {
+            font-size: 1rem !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-weekday {
+            font-size: 0.75rem !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-days {
+            padding: 0.5rem !important;
+        }
+
+        .flatpickr-calendar:not(.inline) .flatpickr-day {
+            height: 2.25rem !important;
+            line-height: 2.25rem !important;
+            max-width: 2.25rem !important;
+            font-size: 0.875rem !important;
+            margin: 0.0625rem !important;
+        }
+
+        /* Responsive Sizing */
+        @media (max-width: 640px) {
+            .flatpickr-day {
+                height: 2.5rem !important;
+                line-height: 2.5rem !important;
+                font-size: 0.875rem !important;
+            }
+
+            .flatpickr-current-month {
+                font-size: 1.125rem !important;
+            }
+
+            .flatpickr-calendar:not(.inline) {
+                width: 280px !important;
+                max-width: 280px !important;
+            }
+
+            .flatpickr-calendar:not(.inline) .flatpickr-day {
+                height: 2rem !important;
+                line-height: 2rem !important;
+                max-width: 2rem !important;
+            }
+        }
+    </style>
+@endpush
+
+@section('content')
+    <div class="min-h-screen bg-slate-50 pt-32 pb-12">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <a href="{{ route('user.rooms.list', $room->type) }}"
+                    class="inline-flex items-center text-slate-500 hover:text-slate-900 mb-8 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Kembali ke Daftar {{ ucfirst($room->type) }}
+                </a>
+
+                <!-- Info Ketersediaan Calendar (Moved to Top) -->
+                <div class="mb-8">
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-8">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-4 text-center">Info Ketersediaan</h3>
+                        <p class="text-slate-600 mb-6 text-sm text-center">
+                            <span class="inline-flex items-center mr-4">
+                                <span class="w-4 h-4 bg-red-200 border border-red-400 rounded mr-2"></span>
+                                <span>Sudah Dibooking</span>
+                            </span>
+                            <span class="inline-flex items-center">
+                                <span class="w-4 h-4 bg-white border border-slate-300 rounded mr-2"></span>
+                                <span>Tersedia</span>
+                            </span>
+                        </p>
+                        <div class="flex justify-center">
+                            <div id="availabilityCalendar" class="inline-block"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div class="p-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                            <div class="flex-1">
+                                <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ $room->name }}</h1>
+                                <p class="text-2xl font-bold text-cyan-600">Rp
+                                    {{ number_format($room->price, 0, ',', '.') }} <span
+                                        class="text-slate-500 text-base font-normal">/ malam</span>
+                                </p>
+                            </div>
+
+                            <!-- Booking Action Form -->
+                            <div class="w-full md:w-auto bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h3 class="font-bold text-slate-900 mb-4">Mulai Pesan</h3>
+                                <form action="{{ route('user.bookings.create', $room->id) }}" method="GET"
+                                    class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs text-slate-500 mb-1">Check-in</label>
+                                            <input type="text" id="checkin" name="start_date" required
+                                                placeholder="Pilih Tanggal"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-slate-500 mb-1">Check-out</label>
+                                            <input type="text" id="checkout" name="end_date" required
+                                                placeholder="Pilih Tanggal"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                                        </div>
+                                    </div>
+                                    <button type="submit"
+                                        class="w-full bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg font-bold text-center transition-all transform hover:scale-[1.02]">
+                                        Pesan Sekarang
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-2 space-y-8">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-4">Deskripsi</h3>
+                                    <p class="text-slate-600 leading-relaxed">{{ $room->description }}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-4">Fasilitas</h3>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        @if($room->facilities)
+                                            @foreach(explode(',', $room->facilities) as $facility)
+                                                <div class="flex items-center text-slate-600">
+                                                    <svg class="w-5 h-5 mr-3 text-cyan-600" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    {{ trim($facility) }}
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            {{-- Default facilities if data is missing --}}
+                                            @foreach(['AC', 'WiFi Gratis', 'Kamar Mandi Dalam', 'Kasur Nyaman', 'TV', 'Lemari'] as $facility)
+                                                <div class="flex items-center text-slate-600">
+                                                    <svg class="w-5 h-5 mr-3 text-cyan-600" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    {{ $facility }}
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-xl p-6 h-fit border border-slate-200">
+                                <h3 class="font-bold text-slate-900 mb-4">Info Penting</h3>
+                                <ul class="space-y-3 text-sm text-slate-600">
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 mr-2 text-slate-400 flex-shrink-0" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Check-in mulai pukul 14:00
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 mr-2 text-slate-400 flex-shrink-0" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Check-out maksimal pukul 12:00
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bookedDates = @json($bookedDates);
+            const disableDates = bookedDates.map(booking => {
+                return {
+                    from: booking.start_date,
+                    to: booking.end_date
+                };
+            });
+
+            // Inline Calendar (Visual Only)
+            flatpickr("#availabilityCalendar", {
+                inline: true,
+                mode: "range",
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: disableDates,
+                clickOpens: false,
+                allowInput: false,
+                className: "read-only-flatpickr",
+                onDayCreate: function (dObj, dStr, fp, dayElem) {
+                    dayElem.style.pointerEvents = 'none';
+                    dayElem.style.cursor = 'default';
+                }
+            });
+
+            // Input Pickers (Interactive)
+            const checkin = flatpickr("#checkin", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: disableDates,
+                onChange: function (selectedDates, dateStr, instance) {
+                    checkout.set('minDate', dateStr);
+                }
+            });
+
+            const checkout = flatpickr("#checkout", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: disableDates
+            });
+        });
+    </script>
+@endpush
