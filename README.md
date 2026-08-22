@@ -1,4 +1,4 @@
-<h1 align="center">Sistem Informasi Penyewaan Kamar dan Villa Berbasis Website<br>(Studi Kasus: Penginapan Dedy Kost Jambi)</h1>
+<h1 align="center">Sistem Informasi Penyewaan Kamar dan Villa Berbasis Website</h1>
 
 <p align="center">
   <img src="preview dashboard.png" alt="Tampilan Dashboard Dedy Kost" width="800">
